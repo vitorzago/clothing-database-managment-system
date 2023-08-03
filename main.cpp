@@ -19,19 +19,19 @@ cout << endl;
 cout << "Running 'SELECT 'Hello World!' AS _message'..." << endl;
 
 try {
-  sql::Driver *driver;
-  sql::Connection *con;
-  sql::Statement *stmt;
-  sql::ResultSet *res;
 
   /* Create a connection */
+  sql::Driver *driver;
   driver = get_driver_instance();
-  con = driver->connect("tcp://127.0.0.1:3306", "root", "root");
-  /* Connect to the MySQL test database */
-  con->setSchema("test");
+  std::shared_ptr<sql::Connection> con(driver->connect("tcp://127.0.0.1:3306", "root", "7448724q9jyy5rn"));
 
-  stmt = con->createStatement();
-  res = stmt->executeQuery("SELECT 'Hello World!' AS _message"); // replace with your statement
+  /* Connect to the MySQL test database */
+  con->setSchema("clothing");
+
+  std::shared_ptr<sql::Statement> stmt(con->createStatement());
+
+  std::shared_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT 'Hello World!' AS _message")); // replace with your statement
+
   while (res->next()) {
     cout << "\t... MySQL replies: ";
     /* Access column data by alias or column name */
@@ -40,9 +40,6 @@ try {
     /* Access column fata by numeric offset, 1 is the first column */
     cout << res->getString(1) << endl;
   }
-  delete res;
-  delete stmt;
-  delete con;
 
 } catch (sql::SQLException &e) {
   cout << "# ERR: " << e.what();
