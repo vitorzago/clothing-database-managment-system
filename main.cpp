@@ -1,6 +1,8 @@
 /* Standard C++ includes */
 #include <stdlib.h>
 #include <iostream>
+#include <string>
+#include <fstream>
 
 
 #include <mysql/mysql.h>
@@ -10,6 +12,15 @@
 #include <mysql-cppconn-8/jdbc/cppconn/exception.h>
 #include <mysql-cppconn-8/jdbc/cppconn/resultset.h>
 #include <mysql-cppconn-8/jdbc/cppconn/statement.h>
+
+std::string read_password(){
+	std::ifstream myfile("password.txt");
+	std::string pwd;
+	if( myfile.is_open() ){
+		myfile >> pwd;
+	}
+	return pwd;
+};
 
 using namespace std;
 
@@ -23,7 +34,8 @@ try {
   /* Create a connection */
   sql::Driver *driver;
   driver = get_driver_instance();
-  std::shared_ptr<sql::Connection> con(driver->connect("tcp://127.0.0.1:3306", "root", "7448724q9jyy5rn"));
+  std::string pwd = read_password();
+  std::shared_ptr<sql::Connection> con(driver->connect("tcp://127.0.0.1:3306", "root", pwd));
 
   /* Connect to the MySQL test database */
   con->setSchema("clothing");
