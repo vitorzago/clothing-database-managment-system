@@ -11,14 +11,16 @@
 #include <mysql-cppconn-8/jdbc/cppconn/resultset.h>
 #include <mysql-cppconn-8/jdbc/cppconn/statement.h>
 
-std::string read_password(){
-	std::ifstream myfile("password.txt");
-	std::string pwd;
-	if( myfile.is_open() ){
-		myfile >> pwd;
-	}
-	return pwd;
+#include "ClothingManager.h"
+
+class ClothingManager {
+  ClothingManager() {
+    driver = get_driver_instance();
+  };
+
+  sql::Driver *driver;
 };
+
 
 void insert_value(std::string value, sql::Statement* statement){
     std::string cmd = "INSERT INTO clothes VALUES('" + value + "','white')";
@@ -56,11 +58,9 @@ try {
 
   std::shared_ptr<sql::Statement> stmt(con->createStatement());
 
-  //stmt->execute("INSERT INTO clothes VALUES('shoes')"); // replace with your statement
   insert_value("new_shows", stmt.get());
   display_table(stmt.get());
 
-  //std::shared_ptr<sql::ResultSet> res(stmt->executeQuery("SELECT 'Hello World!' AS _message")); // replace with your statement
 
 
   //while (res->next()) {
