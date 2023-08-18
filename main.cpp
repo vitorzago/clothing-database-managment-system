@@ -13,54 +13,72 @@
 
 #include "ClothingManager.h"
 
+typedef std::shared_ptr<sql::ResultSet> sqlResult;
+
 class ClothingManager {
+public:
   ClothingManager() {
     driver = get_driver_instance();
+    std::string pwd = read_password();
+    connection = driver->connect("tcp://127.0.0.1:3306", "root", pwd);
+    connection->setSchema("clothing");
+    stmt = connection->createStatement();
   };
 
-  sql::Driver *driver;
-};
+  ~ClothingManager(){
+	  delete stmt;
+	  delete connection;
+  };
 
-
-void insert_value(std::string value, sql::Statement* statement){
+  void insert_value(std::string value){
     std::string cmd = "INSERT INTO clothes VALUES('" + value + "','white')";
-    statement->execute(cmd);
-}
-
-void delete_value(std::string value, sql::Statement* statement){
-    std::string cmd = "DELETE FROM clothes WHERE name='" + value + "'";
-    statement->execute(cmd);
-}
-
-void display_table(sql::Statement* statement){
-
-  std::shared_ptr<sql::ResultSet> result(statement->executeQuery("SELECT * FROM clothes")); 
-  while (result->next()) {
-    std::cout << result->getString(1) << std::endl;
+    stmt->execute(cmd);
   }
 
-}
+  void display_table(){
+  	sqlResult result(stmt->executeQuery("SELECT * FROM clothes")); 
+  	while (result->next()) {
+    		std::cout << result->getString(1) << std::endl;
+  	}
+   }
 
-using namespace std;
+  void delete_value(std::string value){
+    	std::string cmd = "DELETE FROM clothes WHERE name='" + value + "'";
+    	stmt->execute(cmd);
+  }
+
+
+  private:
+  sql::Driver* driver;
+  sql::Statement* stmt;
+  sql::Connection* connection;
+};
+
 
 int main(void)
 {
 try {
+	auto myClothingManager = ClothingManager();
+	myClothingManager.insert_value("shorts");
+	myClothingManager.insert_value("pants");
+	myClothingManager.delete_value("shorts");
+	myClothingManager.display_table();
 
-  /* Create a connection */
-  sql::Driver *driver;
-  driver = get_driver_instance();
-  std::string pwd = read_password();
-  std::shared_ptr<sql::Connection> con(driver->connect("tcp://127.0.0.1:3306", "root", pwd));
 
-  /* Connect to the MySQL test database */
-  con->setSchema("clothing");
-
-  std::shared_ptr<sql::Statement> stmt(con->createStatement());
-
-  insert_value("new_shows", stmt.get());
-  display_table(stmt.get());
-
+//  /* Create a connection */
+//  sql::Driver *driver;
+//  driver = get_driver_instance();
+//  std::string pwd = read_password();
+//  std::shared_ptr<sql::Connection> con(driver->connect("tcp://127.0.0.1:3306", "root", pwd));
+//
+//  /* Connect to the MySQL test database */
+//  con->setSchema("clothing");
+//
+//  std::shared_ptr<sql::Statement> stmt(con->createStatement());
+//
+//  delete_value("new_shows", stmt.get());
+//  display_table(stmt.get());
+//
 
 
   //while (res->next()) {
@@ -73,10 +91,10 @@ try {
   //}
 
 } catch (sql::SQLException &e) {
-  cout << "# ERR: " << e.what();
+	std::cout << "# ERR: " << e.what();
 }
 
-cout << endl;
+std::cout << std::endl;
 
 return EXIT_SUCCESS;
 } 
