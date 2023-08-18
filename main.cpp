@@ -63,33 +63,6 @@ try {
 	myClothingManager.insert_value("pants");
 	myClothingManager.delete_value("shorts");
 	myClothingManager.display_table();
-
-
-//  /* Create a connection */
-//  sql::Driver *driver;
-//  driver = get_driver_instance();
-//  std::string pwd = read_password();
-//  std::shared_ptr<sql::Connection> con(driver->connect("tcp://127.0.0.1:3306", "root", pwd));
-//
-//  /* Connect to the MySQL test database */
-//  con->setSchema("clothing");
-//
-//  std::shared_ptr<sql::Statement> stmt(con->createStatement());
-//
-//  delete_value("new_shows", stmt.get());
-//  display_table(stmt.get());
-//
-
-
-  //while (res->next()) {
-  //  cout << "\t... MySQL replies: ";
-  //  /* Access column data by alias or column name */
-  //  cout << res->getString("_message") << endl;
-  //  cout << "\t... MySQL says it again: ";
-  //  /* Access column fata by numeric offset, 1 is the first column */
-  //  cout << res->getString(1) << endl;
-  //}
-
 } catch (sql::SQLException &e) {
 	std::cout << "# ERR: " << e.what();
 }

@@ -32,6 +32,10 @@ void delete_value(std::string value, sql::Statement* statement){
     statement->execute(cmd);
 }
 
+std::string get_string(std::string my_string){
+	return my_string;
+}
+
 void display_table(sql::Statement* statement){
 
   std::shared_ptr<sql::ResultSet> result(statement->executeQuery("SELECT * FROM clothes")); 
